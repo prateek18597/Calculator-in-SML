@@ -236,9 +236,9 @@ fun solve(None)= bigzero
 	 	bigzero
 	| solve(LessthanEqual(X,Y))=
 	 if	<<=(solve(X),solve(Y)) then
-	 	bigzero
-	 else
 	 	fromString("1")
+	 else
+	 	bigzero
 	| solve(Lessthan(X,Y))=
 	 if	<<(solve(X),solve(Y)) then
 	 	bigzero
