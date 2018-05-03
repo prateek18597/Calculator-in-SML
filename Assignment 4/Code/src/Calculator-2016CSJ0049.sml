@@ -1,5 +1,11 @@
-datatype expression =None | Bracket of expression |Digit of bigint | Add of expression*expression | Sub of expression*expression | Mul of expression*expression | Div of expression*expression; 
-
+datatype expression =None 
+	| Bracket of expression 
+	| Digit of bigint 
+	| Add of expression*expression 
+	| Sub of expression*expression 
+	| Mul of expression*expression 
+	| Div of expression*expression; 
+	
 exception illegal_character;
 
 local
