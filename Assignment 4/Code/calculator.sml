@@ -1,5 +1,6 @@
+use "t.sml";
 
-datatype expression =None |Digit of int | Add of expression*expression | Sub of expression*expression | Mul of expression*expression | Div of expression*expression; 
+datatype expression =None |Digit of BigInt | Add of expression*expression | Sub of expression*expression | Mul of expression*expression | Div of expression*expression; 
 
 infix ++;
 
@@ -133,11 +134,6 @@ fun changeptom([],L)=List.rev(L)
 
 
 fun breakDown(S)=
-	(*let *)
-		(*val p1=part1(String.explode(S),[],0,find(S));*)
-		(*val p2=part2(String.explode(S),[],0,find(S))*)
-		(*val oper=List.nth(String.explode(S),find(S))*)
-	(*in	*)
 	if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"+" then
 		Add(breakDown(part1(String.explode(S),[],0,find(S))),breakDown(part2(String.explode(S),[],0,find(S))))
 	else
@@ -151,8 +147,7 @@ fun breakDown(S)=
 					Div(breakDown(part1(String.explode(S),[],0,find(S))),breakDown(part2(String.explode(S),[],0,find(S))))
 				else
 					Digit(valOf(Int.fromString(S)))
-	(*end*)
-(**)
+
 fun evaluate(None)= 0
 	| evaluate(Digit(B))= B
 	| evaluate(Add(X,A)) =
