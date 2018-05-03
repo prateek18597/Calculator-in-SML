@@ -1,6 +1,6 @@
 use "t.sml";
 
-datatype expression =None |Digit of BigInt | Add of expression*expression | Sub of expression*expression | Mul of expression*expression | Div of expression*expression; 
+datatype expression =None |Digit of int | Add of expression*expression | Sub of expression*expression | Mul of expression*expression | Div of expression*expression; 
 
 infix ++;
 
