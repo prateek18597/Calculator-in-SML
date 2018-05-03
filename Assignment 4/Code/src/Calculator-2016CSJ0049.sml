@@ -4,14 +4,15 @@ datatype expression =None
 	| Add of expression*expression 
 	| Sub of expression*expression 
 	| Mul of expression*expression 
-	| Div of expression*expression; 
+	| Div of expression*expression
+	| Equal of expression*expression
+	| Lessthan of expression*expression
+	| LessthanEqual of expression*expression
+	| Greaterthan of expression*expression
+	| GreaterthanEqual of expression*expression
 	
 exception illegal_character;
-
 local
-
-local
-
 fun ignoreBracket([],L,l,r)=[]
 	| ignoreBracket(h::t,L,l,r)=
 		if h= #"(" then
@@ -38,7 +39,6 @@ fun ignoreBracketC([],i,l,r)=i
 				else
 				ignoreBracketC(t,i+1,l,r)
 
-local
 fun findBracket([],L,i)= ~1
 	| findBracket(h::t,L,i)=
 		if h= #"(" then
@@ -97,15 +97,44 @@ fun findAdd([],L,i,c)= findSub(L,L,0, #" ")
 			if h= #"(" then
 				findAdd((ignoreBracket(t,[],1,0)),L,(i+1+(ignoreBracketC(t,0,1,0))),h)
 			else
-				if h= #"-" orelse h= #"*" orelse h= #"/" orelse h= #"(" orelse h= #")" orelse Char.isDigit(h) then 
+				if h= #"-" orelse h= #"*" orelse h= #"+" orelse h= #"=" orelse h= #"/" orelse h= #"(" orelse h= #")" orelse Char.isDigit(h) then 
 					findAdd(t,L,i+1,h)
 				else
 					~2
-					
-in
+
+
+
+fun findEqual([],L,i,c)=findAdd(L,L,0, #" ")
+	| findEqual(h::t,L,i,c)=
+		if h= #"=" andalso hd(t)= #"=" then
+			i
+		else
+			if h= #"-"  orelse h= #"<" orelse h= #">" orelse h= #"*" orelse h= #"+" orelse h= #"=" orelse h= #"/" orelse h= #"(" orelse h= #")" orelse Char.isDigit(h) then 
+					findEqual(t,L,i+1,h)
+				else
+					~2
+
+fun findLessEqual([],L,i,c)=findEqual(L,L,0, #" ")
+	| findLessEqual(h::t,L,i,c)=
+		if h= #"<" andalso hd(t)= #"<" then
+			i
+		else
+			if h= #"-"  orelse h= #"<" orelse h= #">" orelse h= #"*" orelse h= #"+" orelse h= #"=" orelse h= #"/" orelse h= #"(" orelse h= #")" orelse Char.isDigit(h) then 
+					findLessEqual(t,L,i+1,h)
+				else
+					~2
+
+fun findGreaterEqual([],L,i,c)=findLessEqual(L,L,0, #" ")
+	| findGreaterEqual(h::t,L,i,c)=
+		if h= #">" andalso hd(t)= #">" then
+			i
+		else
+			if h= #"-" orelse h= #"*" orelse h= #"," orelse h= #"<" orelse h= #">" orelse h= #"+" orelse h= #"=" orelse h= #"/" orelse h= #"(" orelse h= #")" orelse Char.isDigit(h) then 
+					findGreaterEqual(t,L,i+1,h)
+				else
+					~2
 fun find(S)=
-	findAdd(String.explode(S),String.explode(S),0, #" ")
-end
+	findGreaterEqual(String.explode(S),String.explode(S),0, #" ")
 
 fun part1(h::t,L2,i,j)=
 	if i=j then
@@ -133,7 +162,6 @@ fun changedtom([],L)=List.rev(L)
 	else
 		changedtom(t,h::L)
 
-in
 
 fun input(S)=
 	if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"+" then
@@ -148,6 +176,23 @@ fun input(S)=
 				if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"/" then
 					Div(input(part1(changedtom(String.explode(S),[]),[],0,find(S))),input(part2(String.explode(S),[],0,find(S))))
 				else
+					if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"=" then
+						Equal(input(part1(String.explode(S),[],0,find(S)+1)),input(part2(String.explode(S),[],0,find(S))))
+					else
+					if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"<" andalso List.nth(String.explode(S),find(S)+1)= #"<" andalso List.nth(String.explode(S),find(S))<> #"=" then
+						Lessthan(input(part1(String.explode(S),[],0,find(S)+1)),input(part2(String.explode(S),[],0,find(S))))
+					else
+					if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"<" andalso List.nth(String.explode(S),find(S)+1)= #"<" andalso List.nth(String.explode(S),find(S))= #"=" then
+						LessthanEqual(input(part1(String.explode(S),[],0,find(S)+2)),input(part2(String.explode(S),[],0,find(S))))
+					else
+					if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #">" andalso List.nth(String.explode(S),find(S)+1)= #">" andalso List.nth(String.explode(S),find(S))<> #"=" then
+						Greaterthan(input(part1(String.explode(S),[],0,find(S)+1)),input(part2(String.explode(S),[],0,find(S))))
+					else
+					if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #">" andalso List.nth(String.explode(S),find(S)+1)= #">" andalso List.nth(String.explode(S),find(S))= #"=" then
+						GreaterthanEqual(input(part1(String.explode(S),[],0,find(S)+2)),input(part2(String.explode(S),[],0,find(S))))
+					else
+					
+					
 					if find(S)=0 andalso List.nth(String.explode(S),find(S))= #"-" then
 						Sub(input(String.implode(changeptom(String.explode(String.substring(S,1,String.size(S)-1)),[]))),Digit(bigzero))
 					else
@@ -169,11 +214,9 @@ fun input(S)=
 									else
 										Digit(fromString(S))
 
-end
 
 exception empty_expression;
 
-local
 fun solve(None)= bigzero
 	| solve(Digit(B))= B
 	| solve(Add(X,A)) =
@@ -186,17 +229,43 @@ fun solve(None)= bigzero
 		quo(solve(X),solve(A))
 	| solve(Bracket(X))=
 		solve(X)
-in
+	| solve(Equal(X,Y))=
+	 if	==(solve(X),solve(Y)) then
+	 	fromString("1")
+	 else
+	 	bigzero
+	| solve(LessthanEqual(X,Y))=
+	 if	<<=(solve(X),solve(Y)) then
+	 	bigzero
+	 else
+	 	fromString("1")
+	| solve(Lessthan(X,Y))=
+	 if	<<(solve(X),solve(Y)) then
+	 	bigzero
+	 else
+	 	fromString("1")
+	| solve(Greaterthan(X,Y))=
+	 if	>>(solve(X),solve(Y)) then
+	 	bigzero
+	 else
+	 	fromString("1")
+	| solve(GreaterthanEqual(X,Y))=
+	 if	>>=(solve(X),solve(Y)) then
+	 	bigzero
+	 else
+	 	fromString("1")
+    
 fun calculate("")= "Empty expression found."
 	| calculate(S)=
 	toString(solve(input(S)))
-end
 
 
 fun removeNewline("")=""
 	|	removeNewline(S)=
 	String.substring(S,0,size(S)-1);
+
 in
+
 fun calculator()=
 	(
 		print ("->");
