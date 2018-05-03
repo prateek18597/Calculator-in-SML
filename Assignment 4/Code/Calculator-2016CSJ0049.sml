@@ -1,5 +1,4 @@
 use "t.sml";
-
 datatype expression =None | Bracket of expression |Digit of bigint | Add of expression*expression | Sub of expression*expression | Mul of expression*expression | Div of expression*expression; 
 
 fun ignoreBracket([],L,l,r)=[]
@@ -169,70 +168,3 @@ fun calculator()=
 		else
 			"Good Bye."
 	)
-
-fun bracket([],L1,check)=""
-	| bracket(h::t,L1,check)=
-		if h= #"(" then
-			bracket(t,L1,true)
-		else
-			if h= #")" then
-				calculate(String.implode(List.rev(L1)))
-			else
-				if check=true then
-					bracket(t,h::L1,check)
-				else
-					bracket(t,L1,check)
-
-exception left_parenthesis_missing;
-exception right_parenthesis_missing;
-
-local
-fun checkBracket([],lc,rc)=
-	if lc>rc then
-		raise right_parenthesis_missing
-	else
-		if rc>lc then
-			raise left_parenthesis_missing
-		else
-			true
-
-	| checkBracket(h::t,lc,rc)=
-		if h= #"(" then
-			checkBracket(t,lc+1,rc)
-		else
-			if h= #")" then
-				checkBracket(t,lc,rc+1)
-			else
-				checkBracket(t,lc,rc)
-
-in
-	fun BracketCount(S)=
-		checkBracket(String.explode(S),0,0)
-end
-
-fun bracketPresent([])=false
-	| bracketPresent(h::t)=
-	if h= #"(" then
-		true
-	else
-		bracketPresent(t)
-
-fun nextRP(h::t)=
-	if h= #"(" then
-		false
-	else
-		if h= #")" then
-			true
-		else
-			nextRP(t)
-
-
-(*fun getBracketInitial(S)=*)
-fun getBracketInitial(h1::h::t,L1)=
-	if h= #"(" andalso (h1= #"+" orelse h1= #"-" orelse h1= #"*" orelse h1= #"/") then
-		calculate(String.implode(List.rev(L1))^String.str(h1)^bracket(h::t,[],false))
-	else
-		getBracketInitial(h::t,h1::L1)
-
-fun work(S)=
-	getBracketInitial(String.explode(S),[])
