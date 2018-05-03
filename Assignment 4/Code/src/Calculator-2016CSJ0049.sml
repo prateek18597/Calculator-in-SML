@@ -2,6 +2,10 @@ datatype expression =None | Bracket of expression |Digit of bigint | Add of expr
 
 exception illegal_character;
 
+local
+
+local
+
 fun ignoreBracket([],L,l,r)=[]
 	| ignoreBracket(h::t,L,l,r)=
 		if h= #"(" then
@@ -28,9 +32,7 @@ fun ignoreBracketC([],i,l,r)=i
 				else
 				ignoreBracketC(t,i+1,l,r)
 
-fun ignore(S)=
-	ignoreBracket(String.explode(S),[],0,0);
-
+local
 fun findBracket([],L,i)= ~1
 	| findBracket(h::t,L,i)=
 		if h= #"(" then
@@ -94,9 +96,10 @@ fun findAdd([],L,i,c)= findSub(L,L,0, #" ")
 				else
 					~2
 					
-
+in
 fun find(S)=
 	findAdd(String.explode(S),String.explode(S),0, #" ")
+end
 
 fun part1(h::t,L2,i,j)=
 	if i=j then
@@ -123,6 +126,8 @@ fun changedtom([],L)=List.rev(L)
 		changedtom(t, #"*"::L)
 	else
 		changedtom(t,h::L)
+
+in
 
 fun input(S)=
 	if find(S)>=1 andalso List.nth(String.explode(S),find(S))= #"+" then
@@ -158,9 +163,11 @@ fun input(S)=
 									else
 										Digit(fromString(S))
 
+end
+
 exception empty_expression;
 
-
+local
 fun solve(None)= bigzero
 	| solve(Digit(B))= B
 	| solve(Add(X,A)) =
@@ -173,15 +180,17 @@ fun solve(None)= bigzero
 		quo(solve(X),solve(A))
 	| solve(Bracket(X))=
 		solve(X)
-
-fun calculate("")= "Non-empty expression found."
+in
+fun calculate("")= "Empty expression found."
 	| calculate(S)=
 	toString(solve(input(S)))
+end
+
 
 fun removeNewline("")=""
 	|	removeNewline(S)=
 	String.substring(S,0,size(S)-1);
-
+in
 fun calculator()=
 	(
 		print ("->");
@@ -189,5 +198,6 @@ fun calculator()=
 		if (Option.valOf(TextIO.inputLine(TextIO.stdIn)))<>"quit\n" then
 			calculator()
 		else
-			(print "Good Bye")
+			"Good Bye"
 	)
+end
